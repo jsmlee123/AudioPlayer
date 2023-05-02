@@ -8,6 +8,7 @@ class PlayerView(QWidget):
     song_select = pyqtSignal()
     stop = pyqtSignal()
     start = pyqtSignal()
+    update = pyqtSignal()
 
 
     def __init__(self) -> None:
@@ -50,13 +51,13 @@ class PlayerView(QWidget):
         self.vol_slider = QSlider(Qt.Vertical, self)
         self.vol_slider.resize(20, 200)
         self.vol_slider.move(10, 20)
-        self.vol_slider.setRange(-100, 100)
+        self.vol_slider.setRange(-50, 50)
         self.vol_slider.setValue(0)
         self.vol_slider.valueChanged.connect(self.update_vol)
         self.vol_slider.sliderReleased.connect(self.change_vol)
 
         #volume label
-        self.vol_label = QLabel("0", self)
+        self.vol_label = QLabel("50", self)
         self.vol_label.resize(50, 20)
         self.vol_label.move(15, 225)
 
@@ -82,6 +83,11 @@ class PlayerView(QWidget):
         self.stop_button.move(320, 320)
         self.stop_button.clicked.connect(self.stop)
 
+        #timer for slider
+        self.update_timer = QTimer(self)
+        self.update_timer.setInterval(1000)
+        self.update_timer.timeout.connect(self.update)
+
     def set_song(self, song):
         self.curr_song = song
         self.song_label.setText(f'Playing : {song}')
@@ -97,7 +103,7 @@ class PlayerView(QWidget):
         return self.vol_slider.value()
 
     def update_vol(self, val):
-        self.vol_label.setText(f'{val}')
+        self.vol_label.setText(f'{val + 50}')
 
     def update_time(self, val):
         self.time_label.setText(f'{val // 60}'.zfill(2) + ":" + f'{val % 60}'.zfill(2))

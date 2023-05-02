@@ -22,10 +22,14 @@ class PlayerController:
 
     
     def _connect_signals(self):
-        self._view.song_select.connect(lambda : self.select_song())
-        self._view.start.connect(lambda : self.start_song())
-        self._view.stop.connect(lambda : self.stop_song())
-        self._view.change_vol.connect(lambda : self.change_vol())
+        self._view.song_select.connect(self.select_song)
+        self._view.start.connect(self.start_song)
+        self._view.stop.connect(self.stop_song)
+        self._view.change_vol.connect(self.change_vol)
+        self._view.update.connect(self.update_time)
+    
+    def update_time(self):
+        1
     
     def change_vol(self):
         self._model.change_vol(self._view.get_volume())

@@ -43,7 +43,7 @@ class Player:
 
     def play_song(self):
         if self.play_obj and self.play_obj.is_playing():
-            return
+            self.play_obj.stop()
         self.play_obj = playback._play_with_simpleaudio(self.curr_song[self.song_pos:])
         self.song_elapse = time.time()
 
