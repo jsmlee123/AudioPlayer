@@ -1,7 +1,8 @@
 import os
+import time
 import simpleaudio
 from pydub import AudioSegment
-from pydub import playback
+from pydub import playback 
 
 
 class Player:
@@ -9,6 +10,9 @@ class Player:
         self.songs = {}
         self._get_songs()
         self.play_obj = None
+        self.curr_song = None
+        self.song_pos = 0
+        self.song_elapse = 0
 
     def _get_songs(self):
         AudioSegment.converter = os.getcwd()+ "\\ffmpeg.exe"                    
@@ -16,7 +20,7 @@ class Player:
         path  = "../AudioPlayer/songs/"
         dir_list = os.listdir(path)
         for song in dir_list:
-            if song[-3:] != "mp3":
+            if song[-3:] != "mp3": 
                 continue
             self.songs[song] = AudioSegment.from_mp3(path + song)
     
@@ -26,10 +30,26 @@ class Player:
             return self.songs[song].duration_seconds
         return -1
 
-    def play_song(self, song, start_ms):
-        self.play_obj = playback._play_with_simpleaudio(self.songs[song][start_ms:])
+    def set_song(self, song, start_ms):
+        self.curr_song = self.songs[song]
+        self.song_pos = start_ms
+        
+
+    def play_song(self):
+        self.play_obj = playback._play_with_simpleaudio(self.curr_song[self.song_pos:])
+        self.song_elapse = time.time()
+
+    def change_vol_idle(self, val):
+        self.curr_song += val
+
+    def change_vol_realtime(self, val):
+        self.curr_song += val
+        self.stop_song()
+        self.song_pos = self.song_pos + 1000 * (time.time() - self.song_elapse) + 1
+        self.play_song()
+        self.song_elapse = time.time()
 
     def stop_song(self):
-        if self.play_obj:
-            self.play_obj.stop()
-            self.play_obj = None
+        self.play_obj.stop()
+        
+           
