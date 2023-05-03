@@ -25,7 +25,9 @@ class Player:
                 continue
             self.songs[song] = AudioSegment.from_mp3(path + song)
     
-    
+    def get_song_time_ms(self):
+        return round(self.song_pos + 1000 * (time.time() - self.song_elapse))
+
     def len_song(self, song):
         if song in self.songs:
             return self.songs[song].duration_seconds
@@ -40,9 +42,12 @@ class Player:
     
     def get_songs(self):
         return self.songs.keys()
+    
+    def is_playing(self):
+        return self.play_obj and self.play_obj.is_playing() 
 
     def play_song(self):
-        if self.play_obj and self.play_obj.is_playing():
+        if self.is_playing():
             self.play_obj.stop()
         self.play_obj = playback._play_with_simpleaudio(self.curr_song[self.song_pos:])
         self.song_elapse = time.time()
@@ -54,7 +59,9 @@ class Player:
     def change_vol(self, val):
         if self.play_obj:
             self.change_vol_realtime(val)
-        
+    
+    def set_song_pos(self, val):
+        self.song_pos = val
 
     def change_vol_realtime(self, val):
         self.curr_song = self.songs[self.curr_song_name]
@@ -69,4 +76,5 @@ class Player:
         self.song_pos = self.song_pos + 1000 * (time.time() - self.song_elapse) + 1
         self.song_elapse = time.time()
         
-           
+    def has_song(self):
+        return self.curr_song
